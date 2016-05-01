@@ -8,6 +8,7 @@ import android.widget.Button;
 
 public class ExamenActivity extends AppCompatActivity {
  Button buttonFiguraInc;
+    Button buttonClaves;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,6 +19,16 @@ public class ExamenActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent mainIntent = new Intent(ExamenActivity.this, FiguraIncompletaActivity.class);
+                ExamenActivity.this.startActivity(mainIntent);
+                ExamenActivity.this.finish();
+            }
+        });
+
+        buttonClaves = (Button) findViewById(R.id.buttonClaves);
+        buttonClaves.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mainIntent = new Intent(ExamenActivity.this,Pantalla2Activity.class);
                 ExamenActivity.this.startActivity(mainIntent);
                 ExamenActivity.this.finish();
             }
