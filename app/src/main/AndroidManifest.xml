@@ -26,7 +26,8 @@
         <activity android:name=".FiguraIncompletaActivity" />
         <activity android:name=".ExamenActivity" />
         <activity android:name=".JuegosActivity" />
-        <activity android:name=".Pantalla2Activity"/>
+        <activity android:name=".Pantalla2Activity" />
+        <activity android:name=".MatricesActivity"/>
     </application>
 
 </manifest>

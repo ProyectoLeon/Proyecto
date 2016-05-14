@@ -22,7 +22,7 @@ public class Pantalla2Activity extends Activity implements OnGesturePerformedLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pantalla2);
-        gestureLib = GestureLibraries.fromRawResource(this, R.raw.gesture);
+        //gestureLib = GestureLibraries.fromRawResource(this, R.raw.gesture);
         if (!gestureLib.load()) {
             finish();
         }

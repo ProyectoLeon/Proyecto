@@ -7,8 +7,9 @@ import android.view.View;
 import android.widget.Button;
 
 public class ExamenActivity extends AppCompatActivity {
- Button buttonFiguraInc;
+    Button buttonFiguraInc;
     Button buttonClaves;
+    Button buttonDragDrop;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +30,16 @@ public class ExamenActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent mainIntent = new Intent(ExamenActivity.this,Pantalla2Activity.class);
+                ExamenActivity.this.startActivity(mainIntent);
+                ExamenActivity.this.finish();
+            }
+        });
+
+        buttonDragDrop = (Button) findViewById(R.id.buttonDragDrop);
+        buttonDragDrop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mainIntent = new Intent(ExamenActivity.this,MatricesActivity.class);
                 ExamenActivity.this.startActivity(mainIntent);
                 ExamenActivity.this.finish();
             }
