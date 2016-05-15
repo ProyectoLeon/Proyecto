@@ -15,6 +15,7 @@ import com.android.myapp.R;
 public class DragAndDropTarget implements View.OnDragListener {
 
     private Context cont;
+    private ViewGroup oldOwner;
 
     public DragAndDropTarget(Context context) {
             cont = context;
@@ -43,11 +44,16 @@ public class DragAndDropTarget implements View.OnDragListener {
             case DragEvent.ACTION_DROP:
                 // Dropped, reassign View to ViewGroup
                 View view = (View) event.getLocalState();
-                ViewGroup owner = (ViewGroup) view.getParent();
-                owner.removeView(view);
                 LinearLayout container = (LinearLayout) v;
+                if(container.getChildCount() != 0){
+                    View oldChild = container.getChildAt(0);
+                    container.removeView(oldChild);
+                    oldOwner.addView(oldChild);
+                }
+                oldOwner = (ViewGroup) view.getParent();
+                oldOwner.removeView(view);
                 container.addView(view);
-                //view.setVisibility(View.VISIBLE);
+                view.setVisibility(View.VISIBLE);
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
                 v.setBackgroundDrawable(getNormalShape());
