@@ -26,6 +26,6 @@ public class MatricesActivity extends Activity {
         findViewById(R.id.imgOpcion2).setOnTouchListener(new DragAndDropSource());
         findViewById(R.id.imgOpcion3).setOnTouchListener(new DragAndDropSource());
         findViewById(R.id.imgOpcion4).setOnTouchListener(new DragAndDropSource());
-        findViewById(R.id.bottomright).setOnDragListener(new DragAndDropTarget(this));
+        findViewById(R.id.target).setOnDragListener(new DragAndDropTarget(this));
     }
 }

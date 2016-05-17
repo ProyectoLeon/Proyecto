@@ -10,12 +10,22 @@
     tools:context=".FiguraIncompletaActivity">
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:id="@+id/IVFigura"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:src="@drawable/carta"
-        android:clickable="true" />
+        android:clickable="true"
+        android:adjustViewBounds="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+}
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/IVFigura2"
+        android:src="@drawable/carta2"
+        android:clickable="true"
+        android:adjustViewBounds="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>
