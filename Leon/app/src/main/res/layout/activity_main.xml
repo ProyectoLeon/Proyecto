@@ -12,10 +12,19 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Comenzar Test"
-        android:id="@+id/test"
+        android:text="Juego Informacion"
+        android:id="@+id/buttonInformacion"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="86dp"
+        android:textSize="20dp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Juego Matrices"
+        android:id="@+id/buttonMatrices"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
         android:textSize="20dp" />
 </RelativeLayout>
