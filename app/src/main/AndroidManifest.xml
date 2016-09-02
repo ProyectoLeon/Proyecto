@@ -27,7 +27,8 @@
         <activity android:name=".ExamenActivity" />
         <activity android:name=".JuegosActivity" />
         <activity android:name=".Pantalla2Activity" />
-        <activity android:name=".MatricesActivity"/>
+        <activity android:name=".MatricesActivity" />
+        <activity android:name=".CubosActivity"></activity>
     </application>
 
 </manifest>

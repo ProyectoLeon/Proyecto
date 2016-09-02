@@ -12,7 +12,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Test WISC IV"
+        android:text="Comenzar Test WISC IV"
         android:id="@+id/buttonTest"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
@@ -22,7 +22,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Juegos"
+        android:text="Juegos Libres"
         android:id="@+id/buttonJuegos"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
