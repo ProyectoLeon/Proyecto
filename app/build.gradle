@@ -30,7 +30,17 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.3.0'
     compile 'com.android.support:support-v4:23.3.0'
-    compile files('src/main/libs/encog-engine-2.5.0.jar')
-    compile files('src/main/libs/neuroph.jar')
-    compile files('src/main/libs/JOCL-0.1.3a-beta.jar')
+    compile files('src/main/libs/neuroph-adapters-2.9.jar')
+    compile files('src/main/libs/neuroph-core-2.9.jar')
+    compile files('src/main/libs/neuroph-contrib-2.9.jar')
+    compile files('src/main/libs/neuroph-imgrec-2.9.jar')
+    compile files('src/main/libs/neuroph-ocr-2.9.jar')
+    compile files('src/main/libs/neuroph-samples-2.9.jar')
+    compile files('src/main/libs/ajt-2.9.jar')
+    compile files('src/main/libs/android-x.x.jar')
+    compile files('src/main/libs/javaml-0.1.7.jar')
+    compile files('src/main/libs/logback-classic-1.0.13.jar')
+    compile files('src/main/libs/slf4j-api-1.7.5.jar')
+    compile files('src/main/libs/slf4j-nop-1.7.6.jar')
+    compile files('src/main/libs/weka.jar')
 }

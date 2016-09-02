@@ -26,9 +26,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-import org.neuroph.contrib.imgrec.ImageRecognitionPlugin;
-//import org.neuroph.contrib.imgrec.image.Image;
-import org.neuroph.contrib.imgrec.image.ImageFactory;
+import org.neuroph.imgrec.ImageRecognitionPlugin;
+//import org.neuroph.imgrec.image.Image;
+import org.neuroph.imgrec.image.ImageFactory;
 import org.neuroph.core.NeuralNetwork;
 
 public class CubosActivity extends Activity implements View.OnTouchListener {
@@ -41,7 +41,7 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
     private LinearLayout screen;
 
     private Bitmap bitmap;
-    private org.neuroph.contrib.imgrec.image.Image image;
+    private org.neuroph.imgrec.image.Image image;
 
     private NeuralNetwork nnet;
     private ImageRecognitionPlugin imageRecognition;
@@ -96,7 +96,7 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
     private Runnable loadDataRunnable = new Runnable() {
         public void run() {
             // open neural network
-            InputStream is = getResources().openRawResource(R.raw.animals_net);
+            InputStream is = getResources().openRawResource(R.raw.net);
             // load neural network
             nnet = NeuralNetwork.load(is);
             imageRecognition = (ImageRecognitionPlugin) nnet.getPlugin(ImageRecognitionPlugin.class);
@@ -105,7 +105,7 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
         }
     };
 
-    private String recognize(org.neuroph.contrib.imgrec.image.Image image) {
+    private String recognize(org.neuroph.imgrec.image.Image image) {
         showDialog(RECOGNIZING_IMAGE_DIALOG);
         // recognize image
         HashMap<String, Double> output = imageRecognition.recognizeImage(image);
