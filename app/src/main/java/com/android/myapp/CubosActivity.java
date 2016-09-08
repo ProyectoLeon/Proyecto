@@ -189,7 +189,7 @@ public class CubosActivity extends Activity {//implements View.OnTouchListener {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             bitmap = (Bitmap) extras.get("data");
-            File file = new File("path");
+            File file = new File(getFilesDir() + "path");
             try {
                 OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
@@ -205,6 +205,8 @@ public class CubosActivity extends Activity {//implements View.OnTouchListener {
             txtAnswer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, new BitmapDrawable(bitmap));
             // show image name
             txtAnswer.setText("Esto es " + recognize(image));
+
+            file.delete();
 
         }
     }
