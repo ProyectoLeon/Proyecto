@@ -8,7 +8,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.Image;
+//import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -20,18 +20,23 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 
-import org.neuroph.imgrec.ImageRecognitionPlugin;
-//import org.neuroph.imgrec.image.Image;
-import org.neuroph.imgrec.image.ImageFactory;
+import org.neuroph.contrib.imgrec.ImageRecognitionPlugin;
+import org.neuroph.contrib.imgrec.image.Image;
+import org.neuroph.contrib.imgrec.image.ImageFactory;
 import org.neuroph.core.NeuralNetwork;
-
-public class CubosActivity extends Activity implements View.OnTouchListener {
+import org.neuroph.contrib.imgrec.image.ImageAndroid;
+public class CubosActivity extends Activity {//implements View.OnTouchListener {
 
     private final int SELECT_PHOTO = 1;
     private final int LOADING_DATA_DIALOG = 2;
@@ -41,7 +46,7 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
     private LinearLayout screen;
 
     private Bitmap bitmap;
-    private org.neuroph.imgrec.image.Image image;
+    private Image image;
 
     private NeuralNetwork nnet;
     private ImageRecognitionPlugin imageRecognition;
@@ -53,11 +58,13 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
 
         txtAnswer = (TextView) findViewById(R.id.txtAnswer);
         screen = (LinearLayout) findViewById(R.id.screen);
-        screen.setOnTouchListener(this);
+//        screen.setOnTouchListener(this);
 
+        dispatchTakePictureIntent();
         loadData();
     }
 
+/*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
@@ -71,6 +78,7 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
                         String filePath = getRealPathFromURI(selectedImage);
                         // get image
                         image = ImageFactory.getImage(filePath);
+
                         InputStream imageStream = getContentResolver().openInputStream(selectedImage);
                         bitmap = Bitmap.createBitmap(BitmapFactory.decodeStream(imageStream));
                         // show image
@@ -83,8 +91,9 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
                 }
         }
     }
+*/
 
-    @Override
+    //    @Override
     public boolean onTouch(View v, MotionEvent event) {
         Intent imageIntent = new Intent(Intent.ACTION_PICK);
         imageIntent.setType("image/*");
@@ -96,7 +105,7 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
     private Runnable loadDataRunnable = new Runnable() {
         public void run() {
             // open neural network
-            InputStream is = getResources().openRawResource(R.raw.net);
+            InputStream is = getResources().openRawResource(R.raw.red_cubos);
             // load neural network
             nnet = NeuralNetwork.load(is);
             imageRecognition = (ImageRecognitionPlugin) nnet.getPlugin(ImageRecognitionPlugin.class);
@@ -105,7 +114,7 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
         }
     };
 
-    private String recognize(org.neuroph.imgrec.image.Image image) {
+    private String recognize(Image image) {
         showDialog(RECOGNIZING_IMAGE_DIALOG);
         // recognize image
         HashMap<String, Double> output = imageRecognition.recognizeImage(image);
@@ -165,4 +174,39 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
 
         return answer;
     }
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    //    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            bitmap = (Bitmap) extras.get("data");
+            File file = new File("path");
+            try {
+                OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            image = ImageFactory.getImage(file);
+
+//            InputStream imageStream = getContentResolver().openInputStream(selectedImage);
+//            bitmap = Bitmap.createBitmap(BitmapFactory.decodeStream(imageStream));
+            // show image
+            txtAnswer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, new BitmapDrawable(bitmap));
+            // show image name
+            txtAnswer.setText("Esto es " + recognize(image));
+
+        }
+    }
+
 }
