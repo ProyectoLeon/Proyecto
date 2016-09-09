@@ -3,6 +3,7 @@ package com.android.myapp;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 //import android.media.Image;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -27,6 +30,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +56,7 @@ public class CubosActivity extends Activity {//implements View.OnTouchListener {
 
     private NeuralNetwork nnet;
     private ImageRecognitionPlugin imageRecognition;
+    private File photo;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -175,18 +182,61 @@ public class CubosActivity extends Activity {//implements View.OnTouchListener {
         return answer;
     }
 
+    private File createTemporaryFile(String part, String ext) throws Exception
+    {
+        File tempDir= getFilesDir();
+        tempDir=new File(tempDir.getAbsolutePath()+"/.temp/");
+        if(!tempDir.exists())
+        {
+            tempDir.mkdirs();
+        }
+        return File.createTempFile(part, ext, tempDir);
+    }
+
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    private Uri mImageUri;
 
     private void dispatchTakePictureIntent() {
+/*
+        photo = null;
+        try
+        {
+            photo = this.createTemporaryFile("picture", ".jpg");
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        mImageUri = Uri.fromFile(photo);
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+           this.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+*/
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
         }
     }
 
-    //    @Override
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+
+/*
+            this.getContentResolver().notifyChange(mImageUri, null);
+            ContentResolver cr = this.getContentResolver();
+//            Bitmap bitmap;
+            try
+            {
+                bitmap = MediaStore.Images.Media.getBitmap(cr, mImageUri);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
             Bundle extras = data.getExtras();
             bitmap = (Bitmap) extras.get("data");
             File file = new File(getFilesDir() + "path");
@@ -197,16 +247,32 @@ public class CubosActivity extends Activity {//implements View.OnTouchListener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            image = ImageFactory.getImage(file);
+*/
+            try {
+                Uri uri = data.getData();
+                bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, null);
+                //                java.net.URI jURI = new java.net.URI(selectedImageUri.toString());
+//                URL url =  jURI.toURL();
+//                image = ImageFactory.getImage(url);
 
-//            InputStream imageStream = getContentResolver().openInputStream(selectedImage);
-//            bitmap = Bitmap.createBitmap(BitmapFactory.decodeStream(imageStream));
-            // show image
-            txtAnswer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, new BitmapDrawable(bitmap));
-            // show image name
-            txtAnswer.setText("Esto es " + recognize(image));
+//                Bundle extras = data.getExtras();
+//                bitmap = (Bitmap) extras.get("data");
+                File file = new File(getFilesDir() + "/path");
+                OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+                os.flush();
+                os.close();
+                // show image
+                txtAnswer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, new BitmapDrawable(bitmap));
+                // show image name
+                txtAnswer.setText("Esto es " + recognize(image));
 
-            file.delete();
+//                photo.delete();
+                file.delete();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
 
         }
     }
