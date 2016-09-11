@@ -13,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,6 +34,8 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +45,7 @@ import org.neuroph.contrib.imgrec.image.Image;
 import org.neuroph.contrib.imgrec.image.ImageFactory;
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.contrib.imgrec.image.ImageAndroid;
-public class CubosActivity extends Activity {//implements View.OnTouchListener {
+public class CubosActivity extends Activity implements View.OnTouchListener {
 
     private final int SELECT_PHOTO = 1;
     private final int LOADING_DATA_DIALOG = 2;
@@ -57,6 +60,7 @@ public class CubosActivity extends Activity {//implements View.OnTouchListener {
     private NeuralNetwork nnet;
     private ImageRecognitionPlugin imageRecognition;
     private File photo;
+    private String mCurrentPhotoPath;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,47 +69,19 @@ public class CubosActivity extends Activity {//implements View.OnTouchListener {
 
         txtAnswer = (TextView) findViewById(R.id.txtAnswer);
         screen = (LinearLayout) findViewById(R.id.screen);
-//        screen.setOnTouchListener(this);
+        screen.setOnTouchListener(this);
 
-        dispatchTakePictureIntent();
         loadData();
+//        dispatchTakePictureIntent();
     }
 
-/*
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-
-        switch (requestCode) {
-            case SELECT_PHOTO:
-                if (resultCode == RESULT_OK) {
-                    try {
-                        Uri selectedImage = imageReturnedIntent.getData();
-                        // get file path of selected image
-                        String filePath = getRealPathFromURI(selectedImage);
-                        // get image
-                        image = ImageFactory.getImage(filePath);
-
-                        InputStream imageStream = getContentResolver().openInputStream(selectedImage);
-                        bitmap = Bitmap.createBitmap(BitmapFactory.decodeStream(imageStream));
-                        // show image
-                        txtAnswer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, new BitmapDrawable(bitmap));
-                        // show image name
-                        txtAnswer.setText("Esto es " + recognize(image));
-                    } catch (FileNotFoundException fnfe) {
-                        Log.d("Neuroph Android Example", "File not found");
-                    }
-                }
-        }
-    }
-*/
-
-    //    @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Intent imageIntent = new Intent(Intent.ACTION_PICK);
-        imageIntent.setType("image/*");
-        // show gallery
-        startActivityForResult(imageIntent, SELECT_PHOTO);
+//        Intent imageIntent = new Intent(Intent.ACTION_PICK);
+//        imageIntent.setType("image/*");
+//        // show gallery
+//        startActivityForResult(imageIntent, SELECT_PHOTO);
+        dispatchTakePictureIntent();
         return false;
     }
 
@@ -193,15 +169,32 @@ public class CubosActivity extends Activity {//implements View.OnTouchListener {
         return File.createTempFile(part, ext, tempDir);
     }
 
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Uri mImageUri;
 
     private void dispatchTakePictureIntent() {
-/*
+
         photo = null;
         try
         {
-            photo = this.createTemporaryFile("picture", ".jpg");
+//            photo = this.createTemporaryFile("picture", ".jpg");
+            photo = createImageFile();
         }
         catch(Exception e)
         {
@@ -210,18 +203,51 @@ public class CubosActivity extends Activity {//implements View.OnTouchListener {
         mImageUri = Uri.fromFile(photo);
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+//            mImageUri = FileProvider.getUriForFile(this,"com.android.myapp.fileprovider",photo);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
-           this.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
-*/
+
+/*
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
         }
+*/
     }
+
+/*
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+        switch (requestCode) {
+            case SELECT_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    try {
+                        Uri selectedImage = imageReturnedIntent.getData();
+                        // get file path of selected image
+                        String filePath = getRealPathFromURI(selectedImage);
+                        // get image
+                        image = ImageFactory.getImage(filePath);
+
+                        InputStream imageStream = getContentResolver().openInputStream(selectedImage);
+                        bitmap = Bitmap.createBitmap(BitmapFactory.decodeStream(imageStream));
+                        // show image
+                        txtAnswer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, new BitmapDrawable(bitmap));
+                        // show image name
+                        txtAnswer.setText("Esto es " + recognize(image));
+                    } catch (FileNotFoundException fnfe) {
+                        Log.d("Neuroph Android Example", "File not found");
+                    }
+                }
+        }
+    }
+*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 
 /*
@@ -236,7 +262,9 @@ public class CubosActivity extends Activity {//implements View.OnTouchListener {
             {
                 e.printStackTrace();
             }
+*/
 
+/*
             Bundle extras = data.getExtras();
             bitmap = (Bitmap) extras.get("data");
             File file = new File(getFilesDir() + "path");
@@ -248,27 +276,36 @@ public class CubosActivity extends Activity {//implements View.OnTouchListener {
                 e.printStackTrace();
             }
 */
+
+
             try {
-                Uri uri = data.getData();
-                bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, null);
-                //                java.net.URI jURI = new java.net.URI(selectedImageUri.toString());
+//                Uri selectedImage = data.getData();
+//                bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, null);
+//                java.net.URI jURI = new java.net.URI(selectedImageUri.toString());
 //                URL url =  jURI.toURL();
-//                image = ImageFactory.getImage(url);
+
+//                File file = new File(mImageUri.getPath());
+//                image = ImageFactory.getImage(file);
+
+//                String filePath = getRealPathFromURI(mImageUri);
+                image = ImageFactory.getImage(mCurrentPhotoPath);
+                InputStream imageStream = getContentResolver().openInputStream(mImageUri);
+                bitmap = Bitmap.createBitmap(BitmapFactory.decodeStream(imageStream));
 
 //                Bundle extras = data.getExtras();
 //                bitmap = (Bitmap) extras.get("data");
-                File file = new File(getFilesDir() + "/path");
-                OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
-                os.flush();
-                os.close();
+//                File file = new File(getFilesDir() + "/path");
+//                OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+//                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+//                os.flush();
+//                os.close();
                 // show image
                 txtAnswer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, new BitmapDrawable(bitmap));
                 // show image name
                 txtAnswer.setText("Esto es " + recognize(image));
 
-//                photo.delete();
-                file.delete();
+                photo.delete();
+//                file.delete();
             } catch (Exception e) {
                 e.printStackTrace();
             }
