@@ -6,6 +6,9 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -27,7 +30,8 @@
         <activity android:name=".ExamenActivity" />
         <activity android:name=".JuegosActivity" />
         <activity android:name=".Pantalla2Activity" />
-        <activity android:name=".MatricesActivity"/>
+        <activity android:name=".MatricesActivity" />
+        <activity android:name=".CubosActivity"></activity>
     </application>
 
 </manifest>
