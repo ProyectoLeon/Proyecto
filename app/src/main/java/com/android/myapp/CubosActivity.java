@@ -88,7 +88,7 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
     private Runnable loadDataRunnable = new Runnable() {
         public void run() {
             // open neural network
-            InputStream is = getResources().openRawResource(R.raw.red_cubos);
+            InputStream is = getResources().openRawResource(R.raw.cubos_net);
             // load neural network
             nnet = NeuralNetwork.load(is);
             imageRecognition = (ImageRecognitionPlugin) nnet.getPlugin(ImageRecognitionPlugin.class);
