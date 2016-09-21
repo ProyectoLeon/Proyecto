@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 //import android.media.Image;
 import android.net.Uri;
@@ -88,7 +89,7 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
     private Runnable loadDataRunnable = new Runnable() {
         public void run() {
             // open neural network
-            InputStream is = getResources().openRawResource(R.raw.cubos_net);
+            InputStream is = getResources().openRawResource(R.raw.red1);
             // load neural network
             nnet = NeuralNetwork.load(is);
             imageRecognition = (ImageRecognitionPlugin) nnet.getPlugin(ImageRecognitionPlugin.class);
@@ -179,7 +180,6 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
@@ -292,6 +292,13 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
                 InputStream imageStream = getContentResolver().openInputStream(mImageUri);
                 bitmap = Bitmap.createBitmap(BitmapFactory.decodeStream(imageStream));
 
+                Matrix matrix = new Matrix();
+                float scaleWidth = ((float) 100) / bitmap.getWidth();
+                float scaleHeight = ((float) 100) / bitmap.getHeight();
+                matrix.postScale(scaleWidth, scaleHeight);
+                Bitmap resize = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                Image im = null;
+                im = image.resizeImage(image,100,100);
 //                Bundle extras = data.getExtras();
 //                bitmap = (Bitmap) extras.get("data");
 //                File file = new File(getFilesDir() + "/path");
@@ -300,9 +307,9 @@ public class CubosActivity extends Activity implements View.OnTouchListener {
 //                os.flush();
 //                os.close();
                 // show image
-                txtAnswer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, new BitmapDrawable(bitmap));
+                txtAnswer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, new BitmapDrawable(resize));
                 // show image name
-                txtAnswer.setText("Esto es " + recognize(image));
+                txtAnswer.setText("Esto es " + recognize(im));
 
                 photo.delete();
 //                file.delete();
